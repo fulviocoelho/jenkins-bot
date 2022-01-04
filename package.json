@@ -1,0 +1,21 @@
+{
+  "name": "jenkins-bot",
+  "version": "1.0.0",
+  "author": "Fulvio Coelho <coelho.fulvio@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^7.0.4"
+  },
+  "scripts": {
+    "build": "cd ./docker/image & docker build -t fulviocoelho/jenkins-bot:latest .",
+    "docker-up:base": "cd ./docker/basic-bot & docker-compose up",
+    "docker-up:sre": "cd ./docker/bot+sre & docker-compose up"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

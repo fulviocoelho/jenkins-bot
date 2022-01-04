@@ -1,0 +1,54 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1145.v7f2433caa07f">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.9.3"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.9.3">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>AUTHOR</name>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CHANNEL</name>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2648.va9433432b33c">
+    <script>try {
+    node {
+        stage(&apos;init_message&apos;){
+            sh &apos;python3 -u /bot/speak.py $CHANNEL &quot;opaa &lt;@!&quot;$AUTHOR&quot;&gt;, já vo faze isso já&quot;&apos;
+        }
+    }
+    stage(&apos;approval&apos;){
+        input &quot;Continue?&quot;
+    }
+    node {
+        stage(&apos;callback_message&apos;){
+            sh &apos;python3 -u /bot/speak.py $CHANNEL &quot;&lt;@!&quot;$AUTHOR&quot;&gt; feito demais, precisando dinovo é só chama :heart:&quot;&apos;
+        }
+    }
+} catch (e) {
+    node {
+        stage(&apos;error_message&apos;) {
+            sh &apos;python3 -u /bot/speak.py $CHANNEL &quot;&lt;@!&quot;$AUTHOR&quot;&gt; algo de errado n tah certo, da uma olhada com o humano oq deu errado, mals n pode ajuda mais D:&quot;&apos;
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

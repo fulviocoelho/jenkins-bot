@@ -1,0 +1,86 @@
+version: '3'
+
+volumes:
+  prometheus-config:
+    name: prometheus-config
+  prometheus-data:
+    driver: local
+  grafana-data:
+
+services:
+  bot:
+    image: fulviocoelho/jenkins-bot:latest
+    container_name: bot
+    ports:
+      - 8080:8080
+    environment:
+      - CLANID={{bot_clan_id}}
+      - COMMAND={{bot_calling_command}}
+      - HEARTBEAT={{interval_in_seconds}}
+      - ME={{author_id_from_used_account}}
+      - TOKEN={{auth_token_for_discord}}
+    deploy:
+        resources:
+            limits:
+              cpus: '0.5'
+              memory: 300MB
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../general-files/config:/config
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/config/prometheus.yml"
+    deploy:
+        resources:
+            limits:
+              cpus: '0.1'
+              memory: 150MB
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    deploy:
+        resources:
+            limits:
+              cpus: '0.25'
+              memory: 250MB
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    deploy:
+        resources:
+            limits:
+              cpus: '0.07'
+              memory: 50MB
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+    deploy:
+        resources:
+            limits:
+              cpus: '0.07'
+              memory: 50MB

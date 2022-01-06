@@ -20,10 +20,4 @@ RUN mkdir /var/jenkins_home/users
 ADD ./users /var/jenkins_home/users/
 USER root
 RUN chmod 777 /var/jenkins_home/users/*
-USER jenkins
-RUN jenkins-plugin-cli --plugins "\
-  docker-workflow:1.26 \
-  pipeline-input-step:latest \
-  startup-trigger-plugin:latest \
-"
 ENTRYPOINT concurrently --kill-others "/bin/bash /bot/startup.sh" "/bin/bash /usr/local/bin/jenkins.sh"

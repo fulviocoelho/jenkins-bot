@@ -8,9 +8,9 @@ services:
     environment:
       - CLANID={{bot_clan_id}}
       - COMMAND={{bot_calling_command}}
-      - HEARTBEAT={{interval_in_seconds}}
       - ME={{author_id_from_used_account}}
       - TOKEN={{auth_token_for_discord}}
+      - DEBUGLOG={{true_or_false}}
     deploy:
         resources:
             limits:

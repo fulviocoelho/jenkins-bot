@@ -3,6 +3,7 @@ import requests
 import json
 import threading
 import time
+import re
 import os
 from datetime import datetime
 
@@ -89,13 +90,18 @@ def commandExecuteWoutParams(command, author_id, channel_id):
     os.system(f'curl -X POST -u admin:{jenkins_api_token} "localhost:8080/job/{command}/buildWithParameters?AUTHOR={author_id}&CHANNEL={channel_id}"')
     exit()
 
+def doubleQuotesSpace(string):
+    for quoted_part in re.findall(r'\"(.+?)\"', string):
+        string = string.replace(quoted_part, quoted_part.replace(" ", "%20"))
+    return string.replace('"', "")
+
 def process_event(event, bol):
-    command = event['d']['content'].split()
+    command = (doubleQuotesSpace(event['d']['content'])).split()
     if len(command) <= 0:
         exit()
-    elif command[0] == bot_command:
+    elif command[0] == bot_command and event['d']['author']['id'] != my_id or command[0] == '/eu' and event['d']['author']['id'] == my_id:
         log(regular_log, f"{event['d']['author']['username']}({event['d']['author']['id']}): {event['d']['content']}")
-        if event['d']['author']['id'] != my_id and check_user_authorization(event['d']['author']['id'], event['d']['channel_id']):
+        if check_user_authorization(event['d']['author']['id'], event['d']['channel_id']):
             log(debug_log, 'executando comando ....')
             if len(command) > 2:
                 threading._start_new_thread(commandExecuteWParams, (command[1], command[2], event['d']['author']['id'], event['d']['channel_id']))

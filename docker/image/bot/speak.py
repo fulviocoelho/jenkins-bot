@@ -6,6 +6,8 @@ discord_token = os.getenv('TOKEN')
 channel_id = sys.argv[1]
 message = sys.argv[2]
 
+message = message.replace('\\n', '\n')
+
 payload = {
     'content': f'🤖 **Bot:** *{message}*'
 }
